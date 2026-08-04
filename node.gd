@@ -6,7 +6,7 @@ var node
 func _ready():
 	node = SFX.play_new(SFX.Labels.AMBIENCE)
 	await get_tree().create_timer(3).timeout
-	SFX.pause_one(node)
+	SFX.pause_one(node, true)
 	await get_tree().create_timer(3).timeout
 	print("shud be unpausing")
 	SFX.unpause_one(node, true)

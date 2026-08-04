@@ -15,8 +15,3 @@ class_name SfxSettings
 @export var pitch_variance: float = 0.0
 ## Minimum delay between repeated instances playing. 0.0 means no delay
 @export var min_delay : float = 1.0
-
-## The curve for the fade in after calling an unpause() function
-@export var unpause_fade_curve: Curve
-## The curve for the fade out after calling a pause() or clear() function
-@export var pause_clear_fade_curve: Curve
