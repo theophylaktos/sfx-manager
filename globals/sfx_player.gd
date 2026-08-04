@@ -165,75 +165,50 @@ func create_fade(audio_stream_player : AudioStreamPlayer, type : String, length 
 	if type == "unpause":
 		print("fade_in")
 		final_multiplier = 1
-		add_fade_in_timer(audio_stream_player, length)
 	if type == "pause" or type == "clear":
 		print("fade_out")
 		final_multiplier = 0
-		add_fade_out_timer(audio_stream_player, length)
-		
-	#var tween : Tween = audio_stream_player.create_tween()
-	#if type == "unpause":
-		#audio_stream_player.volume_db = linear_to_db(0.0)
-		#tween.tween_property(audio_stream_player, "volume_db", linear_to_db(final_multiplier * db_to_linear(audio_stream_player.volume_db)), length)
-	#if type == "pause" or type == "clear":
-		#tween.tween_property(audio_stream_player, "volume_db", linear_to_db(final_multiplier * db_to_linear(audio_stream_player.volume_db)), length)
-	#print(tween)
 	
-	#if type == "unpause":
-		#audio_stream_player.stream_paused = false
-	#if type == "pause":
-		#audio_stream_player.stream_paused = true
-	#if type == "clear":
-		#audio_stream_player.queue_free()
-
-func add_fade_in_timer(audio_stream_player : AudioStreamPlayer, length : float):
-	print("timer")
-	var fade_in_timer : Timer = Timer.new()
-	fade_in_timer.name = audio_stream_player.name + "FadeInTimer"
-	fade_in_timer.wait_time = length
-	fade_in_timer.autostart = true
-	fade_in_timer.one_shot = true
-	audio_stream_player.add_child(fade_in_timer)
+	add_fade_timer(audio_stream_player, type, length)
 	
-func add_fade_out_timer(audio_stream_player : AudioStreamPlayer, length : float):
-	print("timer")
-	var fade_out_timer : Timer = Timer.new()
-	fade_out_timer.name = audio_stream_player.name + "FadeOutTimer"
-	fade_out_timer.wait_time = length
-	fade_out_timer.autostart = true
-	fade_out_timer.one_shot = true
-	audio_stream_player.add_child(fade_out_timer)
+func add_fade_timer(audio_stream_player : AudioStreamPlayer, type : String, length : float = 1.0):
+	var timer : Timer = Timer.new()
+	timer.name = audio_stream_player.name + type
+	timer.wait_time = length
+	timer.autostart = true
+	timer.one_shot = true
+	audio_stream_player.add_child(timer)
 
 func _process(delta):
 	for node in get_children():
 		if node is not AudioStreamPlayer:
 			continue
+		#print(node.get_playback_position())
 		for child in node.get_children():
-			if "FadeInTimer" not in child.name:
-				continue
-			if child == null:
-				continue
+			var type : String
+			if "unpause" in child.name:
+				type = "unpause"
+			elif "pause" in child.name:
+				type = "pause"
+			elif "clear" in child.name:
+				type = "clear"
 			print(child.time_left)
 			if child.time_left > 0:
-				node.volume_db = linear_to_db(preload("uid://b558ipjpf7jwo").sample(child.time_left)) + label_to_setting[node_to_label(node)].volume
 				print(node.volume_db)
 				print("--")
-			elif child.time_left == 0:
-				print("fade over,delete")
+				if type == "unpause":
+					node.volume_db = linear_to_db(preload("uid://b558ipjpf7jwo").sample(child.time_left)) + label_to_setting[node_to_label(node)].volume
+				if type == "pause" or type == "clear":
+					node.volume_db = linear_to_db(preload("uid://d2651b3sfawfp").sample(child.time_left)) + label_to_setting[node_to_label(node)].volume
+					
+			if child.time_left == 0:
 				child.queue_free()
-		for child in node.get_children():
-			if "FadeOutTimer" not in child.name:
-				continue
-			if child == null:
-				continue
-			if child.time_left > 0:
-				node.volume_db = linear_to_db(preload("uid://d2651b3sfawfp").sample(child.time_left)) + label_to_setting[node_to_label(node)].volume
-				print(child.time_left)
-				print(node.volume_db)
-				print("--")
-			elif child.time_left == 0:
-				print("fade over,delete")
-				child.queue_free()
+				if type == "unpause":
+					node.stream_paused = false
+				if type == "pause":
+					node.stream_paused = true
+				if type == "clear":
+					node.queue_free()
 
 func node_to_label(audio_stream_player : AudioStreamPlayer):
 	var text = audio_stream_player.name.remove_chars("1234567890")
