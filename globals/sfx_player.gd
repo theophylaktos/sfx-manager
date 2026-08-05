@@ -10,7 +10,7 @@ enum Labels {
 ## TRUE = get debug messages each time a sound is played, FALSE = no debug messages
 const print_sounds: bool = true
 
-## Variable to make each AudioStreamPlayer's name unique. Increased by one per new sound
+## Variable to make each AudioStreamPlayer's name unique. Increased by one per new audio_stream_player
 var counter : int = 0
 
 @export var label_to_setting: Dictionary[Labels, SfxSettings]
@@ -47,16 +47,9 @@ func play(label: Labels, loop : bool = false, optional_volume: float = 0.0, opti
 		
 	return audio_stream_player
 
-func _add_min_delay_timer(label : Labels):
-	var setting = label_to_setting[label]
-	var min_delay_timer : Timer = Timer.new()
-	min_delay_timer.name = Labels.keys()[label] + "MinDelayTimer"
-	min_delay_timer.wait_time = setting.min_delay
-	min_delay_timer.autostart = true
-	min_delay_timer.timeout.connect(min_delay_timer.queue_free)
-	add_child(min_delay_timer)
+#region unpause, pause, clear, play_2d
 
-## Play all audio nodes of a specific type
+## Unpause all audio nodes of a specific type
 func unpause_one(audio_stream_player: AudioStreamPlayer, fade: bool = false, fade_length : float = 1.0):
 	for node in get_children():
 		if node == audio_stream_player:
@@ -64,7 +57,7 @@ func unpause_one(audio_stream_player: AudioStreamPlayer, fade: bool = false, fad
 				_add_fade_timer(node, "unpause", fade_length)
 			else:
 				node.play()
-		if node.name == Labels.keys()[node_to_label(audio_stream_player)] +  "MinDelayTimer":
+		if node.name == Labels.keys()[_node_to_label(audio_stream_player)] +  "MinDelayTimer":
 			node.set_paused(false)
 
 ## Play all audio nodes that use a certain label
@@ -99,7 +92,7 @@ func pause_one(audio_stream_player : AudioStreamPlayer, fade: bool = false, fade
 				_add_fade_timer(node, "pause", fade_length)
 			else:
 				node.stop()
-		if node.name == Labels.keys()[node_to_label(audio_stream_player)] +  "MinDelayTimer":
+		if node.name == Labels.keys()[_node_to_label(audio_stream_player)] +  "MinDelayTimer":
 			node.set_paused(true)
 
 ##Pause all audio nodes of a specific type
@@ -134,7 +127,7 @@ func clear_one(audio_stream_player : AudioStreamPlayer, fade: bool = false, fade
 				_add_fade_timer(node, "clear", fade_length)
 			else:
 				node.queue_free()
-		if node.name == Labels.keys()[node_to_label(node)] +  "MinDelayTimer":
+		if node.name == Labels.keys()[_node_to_label(node)] +  "MinDelayTimer":
 			node.queue_free()
 
 ## remove all playing audio of a specific type
@@ -148,7 +141,7 @@ func clear_type(label : Labels, fade: bool = false, fade_length : float = 1.0):
 			else:
 				node.queue_free()
 		if node is Timer:
-			if node.name == Labels.keys()[node_to_label(node)] +  "MinDelayTimer":
+			if node.name == Labels.keys()[_node_to_label(node)] +  "MinDelayTimer":
 				node.queue_free()
 
 ## remove all audio nodes
@@ -160,10 +153,36 @@ func clear_all(fade: bool = false, fade_length : float = 1.0):
 			node.queue_free()
 
 func play_2d(label : Labels, node : Node):
+	var setting = label_to_setting[label]
 	var audio_stream_player_2d : AudioStreamPlayer2D = AudioStreamPlayer2D.new()
-	AudioStreamPlayer2D.stream = label_to_setting[label].stream
+	AudioStreamPlayer2D.stream = setting.stream
+	AudioStreamPlayer2D.volume_db = setting.volume
+	AudioStreamPlayer2D.pitch_scale = setting.pitch
+	AudioStreamPlayer2D.bus = setting.bus
 	node.add_child(audio_stream_player_2d)
 	
+func play_3d(label : Labels, node : Node):
+	var setting = label_to_setting[label]
+	var audio_stream_player_3d : AudioStreamPlayer3D = AudioStreamPlayer3D.new()
+	AudioStreamPlayer3D.stream = setting.stream
+	AudioStreamPlayer3D.volume_db = setting.volume
+	AudioStreamPlayer3D.pitch_scale = setting.pitch
+	AudioStreamPlayer3D.bus = setting.bus
+	node.add_child(audio_stream_player_3d)
+
+#endregion
+
+#region _add_min_delay_timer, _add_fade_timer, _process, _node_to_label
+
+func _add_min_delay_timer(label : Labels):
+	var setting = label_to_setting[label]
+	var min_delay_timer : Timer = Timer.new()
+	min_delay_timer.name = Labels.keys()[label] + "MinDelayTimer"
+	min_delay_timer.wait_time = setting.min_delay
+	min_delay_timer.autostart = true
+	min_delay_timer.timeout.connect(min_delay_timer.queue_free)
+	add_child(min_delay_timer)
+
 func _add_fade_timer(audio_stream_player : AudioStreamPlayer, type : String, length : float = 1.0):
 	var timer : Timer = Timer.new()
 	timer.name = audio_stream_player.name + type
@@ -188,7 +207,7 @@ func _process(_delta):
 			#print(child.time_left)
 			if child.time_left > 0:
 				#print(node.volume_db)
-				var volume : float = label_to_setting[node_to_label(node)].volume
+				var volume : float = label_to_setting[_node_to_label(node)].volume
 				if type == "unpause":
 					node.stream_paused = false
 					node.volume_db = linear_to_db(preload("uid://b558ipjpf7jwo").sample(child.time_left / child.wait_time)) + volume
@@ -205,7 +224,9 @@ func _process(_delta):
 					node.queue_free()
 		#print("--")
 
-func node_to_label(audio_stream_player : AudioStreamPlayer):
+func _node_to_label(audio_stream_player : AudioStreamPlayer):
 	var text = audio_stream_player.name.remove_chars("1234567890")
 	text = text.to_upper()
 	return Labels[text]
+
+#endregion

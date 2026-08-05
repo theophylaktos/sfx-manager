@@ -36,3 +36,5 @@ label_to_setting = Dictionary[int, ExtResource("2_xnm38")]({
 1: SubResource("Resource_4aosy"),
 2: SubResource("Resource_fhhs2")
 })
+
+[node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="." unique_id=955441306]
