@@ -3,12 +3,12 @@
 importer="wav"
 type="AudioStreamWAV"
 uid="uid://c5pj503hq05cm"
-path="res://.godot/imported/industry_ambience.wav-93dc33c062e177680aeb8636f224792c.sample"
+path="res://.godot/imported/industry_ambience.wav-45ec797dd5c24b3bf9ee092a976de2b1.sample"
 
 [deps]
 
-source_file="res://industry_ambience.wav"
-dest_files=["res://.godot/imported/industry_ambience.wav-93dc33c062e177680aeb8636f224792c.sample"]
+source_file="res://testing/industry_ambience.wav"
+dest_files=["res://.godot/imported/industry_ambience.wav-45ec797dd5c24b3bf9ee092a976de2b1.sample"]
 
 [params]
 
