@@ -17,14 +17,12 @@ script = ExtResource("2_xnm38")
 bus = "Master"
 stream = ExtResource("4_k8a2e")
 volume = 24.0
-min_delay = 0.0
 metadata/_custom_type_script = "uid://c3d63fvkogmx2"
 
 [sub_resource type="Resource" id="Resource_fhhs2"]
 script = ExtResource("2_xnm38")
 bus = "Master"
 stream = ExtResource("5_vcnun")
-pitch = 0.0
 min_delay = 3.0
 metadata/_custom_type_script = "uid://c3d63fvkogmx2"
 

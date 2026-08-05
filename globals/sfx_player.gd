@@ -1,24 +1,32 @@
 extends Node
 # This node (the scene) to be added as a global named SFX
 
-## Optionally, append a comment (##) after each label to describe where it is used
-## Enum of all sounds. Add a new label here when you add a new sound
+## Optionally, append a comment (##) after each label to describe where it is used [br]
+## List of all sounds. Add a new item here when you add a new sound.
 enum Labels {
 	FALL, 
 	AMBIENCE,
 	SAND,
 }
 
-## TRUE = print debug messages FALSE = do not print debug messages
-const debug_messages: bool = true
+## [code]TRUE[/code]: Print debug messages [br]
+## [code]FALSE[/code]: Do not print debug messages
+const DEBUG_MESSAGES: bool = true
 
-## Variable to make each AudioStreamPlayer's name unique. Increased by one per new audio_stream_player
+## Variable to make each [AudioStreamPlayer]'s name unique. 
+## Increased by one when a new [AudioStreamPlayer] is instantiated.
 var counter : int = 0
 
+## A dictionary storing labels from [code]SFX.Labels[/code] and the associated [code]sfx_settings.gd[/code]
 @export var label_to_setting: Dictionary[Labels, SfxSettings]
 
-## Play a sound effect, as defined by label. Intended should be SFX.play(SFX.Labels.NAME)
-func play(label: Labels, loop : bool = false, optional_volume: float = 0.0, optional_pitch: float = 0.0):
+## [b]Play a sound in a new [AudioStreamPlayer], as defined by [param label]. It should be called as[/b] [code]SFX.play(SFX.Labels.NAME)[/code]. [br]
+##[br]
+## [param label]: The sound you want to play, defined in SFX.Labels [br]
+## [param loop]: Whether the sound should loop or not. [code]Default: FALSE[/code] [br]
+## [param volume_mod]: Volume that is added after variation is calculated. [code]Default: 0.0[/code] [br]
+## [param pitch_mod]: Pitch that is added after variation is calculated. [code]Default: 0.0[/code]
+func play(label: Labels, loop : bool = false, volume_mod: float = 0.0, pitch_mod: float = 0.0):
 	# Checks if a min_delay_timer is in the scene tree, and if so, return early
 	if has_node(Labels.keys()[label] + "MinDelayTimer"):
 		return
@@ -32,8 +40,8 @@ func play(label: Labels, loop : bool = false, optional_volume: float = 0.0, opti
 	audio_stream_player.stream = setting.stream
 	audio_stream_player.name = Labels.keys()[label] + str(counter)
 	counter += 1
-	audio_stream_player.volume_db = setting.volume + randf_range(-1,1) * setting.volume_variance + optional_volume
-	audio_stream_player.pitch_scale = setting.pitch + randf_range(-1,1) * setting.pitch_variance + optional_pitch
+	audio_stream_player.volume_db = setting.volume + randf_range(-1,1) * setting.volume_variance + volume_mod
+	audio_stream_player.pitch_scale = setting.pitch + randf_range(-1,1) * setting.pitch_variance + pitch_mod
 	if loop == true:
 		audio_stream_player.stream.loop = true
 	
@@ -41,7 +49,7 @@ func play(label: Labels, loop : bool = false, optional_volume: float = 0.0, opti
 	audio_stream_player.finished.connect(audio_stream_player.queue_free)
 	audio_stream_player.playing = true
 	
-	if debug_messages:
+	if DEBUG_MESSAGES:
 		print("Played one sound: ", audio_stream_player)
 		
 	if setting.min_delay != 0:
@@ -50,8 +58,11 @@ func play(label: Labels, loop : bool = false, optional_volume: float = 0.0, opti
 	return audio_stream_player
 
 #region unpause, pause, clear, play_2d
-
-## Unpause all audio nodes of a specific type
+## [b]Unpause one [AudioStreamPlayer], with an optional fade in[/b] [br]
+## [br]
+## [param audio_stream_player]: The [AudioStreamPlayer] to be unpaused [br]
+## [param fade]: Whether the audio should fade out. [code]Default: FALSE[/code] [br]
+## [param fade_length]: In seconds, how long the sound should fade in for. [code][code]Default: 1.0[/code][/code]
 func unpause_one(audio_stream_player: AudioStreamPlayer, fade: bool = false, fade_length : float = 1.0):
 	for node in get_children():
 		if node == audio_stream_player:
@@ -63,10 +74,14 @@ func unpause_one(audio_stream_player: AudioStreamPlayer, fade: bool = false, fad
 		if node.name == Labels.keys()[_node_to_label(audio_stream_player)] +  "MinDelayTimer":
 			node.set_paused(false)
 			
-	if debug_messages:
+	if DEBUG_MESSAGES:
 		print("Unpaused one sound: ", audio_stream_player)
 
-## Play all audio nodes that use a certain label
+## [b]Unpause all [AudioStreamPlayer]s of a specific label, with an optional fade in[/b] [br]
+## [br]
+## [param label]: [AudioStreamPlayer]s that use this label will be unpaused [br]
+## [param fade]: Whether the audio should fade in. [code]Default: FALSE[/code] [br]
+## [param fade_length]: In seconds, how long the sound should fade in for. [code]Default: 1.0[/code]
 func unpause_type(label: Labels, fade: bool = false, fade_length : float = 1.0):
 	for node in get_children():
 		if node is AudioStreamPlayer:
@@ -80,10 +95,13 @@ func unpause_type(label: Labels, fade: bool = false, fade_length : float = 1.0):
 		if node.name == Labels.keys()[label] +  "MinDelayTimer":
 			node.set_paused(false)
 			
-	if debug_messages:
+	if DEBUG_MESSAGES:
 		print("Unpaused all sounds of type: ", Labels.keys()[label])
 
-## Play all audio nodes
+## [b]Unpause all [AudioStreamPlayer]s, with an optional fade in[/b] [br]
+## [br]
+## [param fade]: Whether the audio should fade in. [code]Default: FALSE[/code] [br]
+## [param fade_length]: In seconds, how long the sound should fade in for. [code]Default: 1.0[/code]
 func unpause_all(fade: bool = false, fade_length : float = 1.0):
 	for node in get_children():
 		if node is AudioStreamPlayer:
@@ -95,9 +113,14 @@ func unpause_all(fade: bool = false, fade_length : float = 1.0):
 		if node.name.contains("MinDelayTimer"):
 			node.set_paused(false)
 			
-	if debug_messages:
+	if DEBUG_MESSAGES:
 		print("Unpaused all sounds")
 
+## [b]Pause one [AudioStreamPlayer], with an optional fade out.[/b] [br]
+## [br]
+## [param audio_stream_player]: The [AudioStreamPlayer] to be paused [br]
+## [param fade]: Whether the audio should fade out. [code]Default: FALSE[/code] [br]
+## [param fade_length]: In seconds, how long the sound should fade out for. [code]Default: 1.0[/code]
 func pause_one(audio_stream_player : AudioStreamPlayer, fade: bool = false, fade_length : float = 1.0):
 	for node in get_children():
 		if node == audio_stream_player:
@@ -109,10 +132,14 @@ func pause_one(audio_stream_player : AudioStreamPlayer, fade: bool = false, fade
 		if node.name == Labels.keys()[_node_to_label(audio_stream_player)] +  "MinDelayTimer":
 			node.set_paused(true)
 			
-	if debug_messages:
+	if DEBUG_MESSAGES:
 		print("Paused one sound: ", audio_stream_player)
 
-##Pause all audio nodes of a specific type
+## [b]Pause all [AudioStreamPlayer]s of a specific label, with an optional fade in[/b] [br]
+## [br]
+## [param label]: [AudioStreamPlayer]s that use this label will be paused [br]
+## [param fade]: Whether the audio should fade out. [code]Default: FALSE[/code] [br]
+## [param fade_length]: In seconds, how long the sound should fade out for. [code]Default: 1.0[/code]
 func pause_type(label: Labels, fade: bool = false, fade_length : float = 1.0):
 	for node in get_children():
 		if node is AudioStreamPlayer:
@@ -126,10 +153,13 @@ func pause_type(label: Labels, fade: bool = false, fade_length : float = 1.0):
 		if node.name == Labels.keys()[label] +  "MinDelayTimer":
 			node.set_paused(true)
 			
-	if debug_messages:
+	if DEBUG_MESSAGES:
 		print("Paused all sounds of type: ", Labels.keys()[label])
 
-## Pause all audio nodes
+## [b]Pause all [AudioStreamPlayer]s, with an optional fade out[/b] [br]
+## [br]
+## [param fade]: Whether the audio should fade out. [code]Default: FALSE[/code] [br]
+## [param fade_length]: In seconds, how long the sound should fade out for. [code]Default: 1.0[/code]
 func pause_all(fade: bool = false, fade_length : float = 1.0):
 	for node in get_children():
 		if node is AudioStreamPlayer:
@@ -141,9 +171,14 @@ func pause_all(fade: bool = false, fade_length : float = 1.0):
 		if node.name.contains("MinDelayTimer"):
 			node.set_paused(true)
 			
-	if debug_messages:
+	if DEBUG_MESSAGES:
 		print("Paused all sounds")
 
+## [b]Clear one [AudioStreamPlayer], with an optional fade out.[/b] [br]
+## [br]
+## [param audio_stream_player]: The [AudioStreamPlayer] to be paused [br]
+## [param fade]: Whether the audio should fade out. [code]Default: FALSE[/code] [br]
+## [param fade_length]: In seconds, how long the sound should fade out for. [code]Default: 1.0[/code]
 func clear_one(audio_stream_player : AudioStreamPlayer, fade: bool = false, fade_length : float = 1.0):
 	for node in get_children():
 		if node == audio_stream_player:
@@ -155,10 +190,14 @@ func clear_one(audio_stream_player : AudioStreamPlayer, fade: bool = false, fade
 		if node.name == Labels.keys()[_node_to_label(audio_stream_player)] +  "MinDelayTimer":
 			node.queue_free()
 			
-	if debug_messages:
+	if DEBUG_MESSAGES:
 		print("cleared one sound: ", audio_stream_player)
 
-## remove all playing audio of a specific type
+## [b]Clear all [AudioStreamPlayer]s of a specific label, with an optional fade out[/b] [br]
+## [br]
+## [param label]: [AudioStreamPlayer]s that use this label will be cleared [br]
+## [param fade]: Whether the audio should fade out. [code]Default: FALSE[/code] [br]
+## [param fade_length]: In seconds, how long the sound should fade out for. [code]Default: 1.0[/code]
 func clear_type(label : Labels, fade: bool = false, fade_length : float = 1.0):
 	for node in get_children():
 		if node is AudioStreamPlayer:
@@ -172,10 +211,13 @@ func clear_type(label : Labels, fade: bool = false, fade_length : float = 1.0):
 		if node.name == Labels.keys()[label] +  "MinDelayTimer":
 			node.queue_free()
 			
-	if debug_messages:
+	if DEBUG_MESSAGES:
 		print("Cleared all sounds of type: ", Labels.keys()[label])
 
-## remove all audio nodes
+## [b]Clear all [AudioStreamPlayer]s, with an optional fade out[/b] [br]
+## [br]
+## [param fade]: Whether the audio should fade out. [code]Default: FALSE[/code] [br]
+## [param fade_length]: In seconds, how long the sound should fade out for. [code]Default: 1.0[/code]
 func clear_all(fade: bool = false, fade_length : float = 1.0):
 	for node in get_children():
 		if node is AudioStreamPlayer:
@@ -187,9 +229,13 @@ func clear_all(fade: bool = false, fade_length : float = 1.0):
 		if node.name.contains("MinDelayTimer"):
 			node.queue_free()
 			
-	if debug_messages:
+	if DEBUG_MESSAGES:
 		print("Cleared all sounds")
 
+## [b]Attach an AudioStreamPlayer2D of type label as a child of a node[/b] [br]
+## [br]
+## [param label]: The label that the [AudioStreamPlayer2D] should use [br]
+## [param node]: The node that the [AudioStreamPlayer2D] should be attached on
 func play_2d(label : Labels, node : Node):
 	var setting = label_to_setting[label]
 	var audio_stream_player_2d : AudioStreamPlayer2D = AudioStreamPlayer2D.new()
@@ -198,7 +244,11 @@ func play_2d(label : Labels, node : Node):
 	AudioStreamPlayer2D.pitch_scale = setting.pitch
 	AudioStreamPlayer2D.bus = setting.bus
 	node.add_child(audio_stream_player_2d)
-	
+
+## [b]Attach an AudioStreamPlayer3D of type label as a child of a node[/b] [br]
+## [br]
+## [param label]: The label that the [AudioStreamPlayer3D] should use [br]
+## [param node]: The node that the [AudioStreamPlayer3D] should be attached on
 func play_3d(label : Labels, node : Node):
 	var setting = label_to_setting[label]
 	var audio_stream_player_3d : AudioStreamPlayer3D = AudioStreamPlayer3D.new()
@@ -212,6 +262,9 @@ func play_3d(label : Labels, node : Node):
 
 #region _add_min_delay_timer, _add_fade_timer, _process, _node_to_label
 
+## [b]Creates a [Timer] for the minimum delay until that sound can be played again[/b] [br]
+## [br]
+## [param label]: The label that the Minimum delay [Timer] should be associated with[br]
 func _add_min_delay_timer(label : Labels):
 	var setting = label_to_setting[label]
 	var min_delay_timer : Timer = Timer.new()
@@ -221,7 +274,12 @@ func _add_min_delay_timer(label : Labels):
 	min_delay_timer.timeout.connect(min_delay_timer.queue_free)
 	add_child(min_delay_timer)
 
-func _add_fade_timer(audio_stream_player : AudioStreamPlayer, type : String, length : float = 1.0):
+## [b]Creates a [Timer] for fading under an [AudioStreamPlayer][/b] [br]
+## [br]
+## [param audio_stream_player]: The [AudioStreamPlayer] that the [Timer] should be a child of [br]
+## [b]type[/b]: The type of fade that the [Timer] is (Either [code]unpause[/code], [code]pause[/code], or [code]clear[/code]) [br]
+## [b]length[/b]: The value that [member Timer.wait_time] will be
+func _add_fade_timer(audio_stream_player : AudioStreamPlayer, type : String, length : float):
 	var timer : Timer = Timer.new()
 	timer.name = audio_stream_player.name + type
 	timer.wait_time = length
@@ -260,9 +318,11 @@ func _process(_delta):
 				if type == "clear":
 					node.queue_free()
 
+## [b]Accepts a node of type [AudioStreamPlayer], and returns its associated label.[/b] [br]
+## [br]
+## [param audio_stream_player]: The [AudioStreamPlayer] whos label will be returned
 func _node_to_label(audio_stream_player : AudioStreamPlayer):
 	var text = audio_stream_player.name.remove_chars("1234567890")
 	text = text.to_upper()
 	return Labels[text]
-
 #endregion
