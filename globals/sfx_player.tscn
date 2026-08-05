@@ -24,8 +24,8 @@ metadata/_custom_type_script = "uid://c3d63fvkogmx2"
 script = ExtResource("2_xnm38")
 bus = "Master"
 stream = ExtResource("5_vcnun")
-pitch = 4.0
-min_delay = 1.99
+pitch = 0.0
+min_delay = 3.0
 metadata/_custom_type_script = "uid://c3d63fvkogmx2"
 
 [node name="SfxPlayer" type="Node" unique_id=1790965844]
@@ -36,5 +36,3 @@ label_to_setting = Dictionary[int, ExtResource("2_xnm38")]({
 1: SubResource("Resource_4aosy"),
 2: SubResource("Resource_fhhs2")
 })
-
-[node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="." unique_id=955441306]

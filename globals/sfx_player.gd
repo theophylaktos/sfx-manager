@@ -1,14 +1,16 @@
 extends Node
 # This node (the scene) to be added as a global named SFX
 
+## Optionally, append a comment (##) after each label to describe where it is used
+## Enum of all sounds. Add a new label here when you add a new sound
 enum Labels {
-	FALL,
+	FALL, 
 	AMBIENCE,
 	SAND,
 }
 
-## TRUE = get debug messages each time a sound is played, FALSE = no debug messages
-const print_sounds: bool = true
+## TRUE = print debug messages FALSE = do not print debug messages
+const debug_messages: bool = true
 
 ## Variable to make each AudioStreamPlayer's name unique. Increased by one per new audio_stream_player
 var counter : int = 0
@@ -39,8 +41,8 @@ func play(label: Labels, loop : bool = false, optional_volume: float = 0.0, opti
 	audio_stream_player.finished.connect(audio_stream_player.queue_free)
 	audio_stream_player.playing = true
 	
-	if print_sounds:
-		print("playing: ", Labels.keys()[label])
+	if debug_messages:
+		print("Played one sound: ", audio_stream_player)
 		
 	if setting.min_delay != 0:
 		_add_min_delay_timer(label)
@@ -57,8 +59,12 @@ func unpause_one(audio_stream_player: AudioStreamPlayer, fade: bool = false, fad
 				_add_fade_timer(node, "unpause", fade_length)
 			else:
 				node.play()
+		# If the node is a MinDelayTimer, unpause it
 		if node.name == Labels.keys()[_node_to_label(audio_stream_player)] +  "MinDelayTimer":
 			node.set_paused(false)
+			
+	if debug_messages:
+		print("Unpaused one sound: ", audio_stream_player)
 
 ## Play all audio nodes that use a certain label
 func unpause_type(label: Labels, fade: bool = false, fade_length : float = 1.0):
@@ -70,9 +76,12 @@ func unpause_type(label: Labels, fade: bool = false, fade_length : float = 1.0):
 				_add_fade_timer(node, "unpause", fade_length)
 			else:
 				node.play()
-		if node is Timer:
-			if node.name == Labels.keys()[label] +  "MinDelayTimer":
-				node.set_paused(false)
+		# If the node is a MinDelayTimer, unpause it
+		if node.name == Labels.keys()[label] +  "MinDelayTimer":
+			node.set_paused(false)
+			
+	if debug_messages:
+		print("Unpaused all sounds of type: ", Labels.keys()[label])
 
 ## Play all audio nodes
 func unpause_all(fade: bool = false, fade_length : float = 1.0):
@@ -82,8 +91,12 @@ func unpause_all(fade: bool = false, fade_length : float = 1.0):
 				_add_fade_timer(node, "unpause", fade_length)
 			else:
 				node.play()
-		if node is Timer:
+		# If the node is a MinDelayTimer, unpause it
+		if node.name.contains("MinDelayTimer"):
 			node.set_paused(false)
+			
+	if debug_messages:
+		print("Unpaused all sounds")
 
 func pause_one(audio_stream_player : AudioStreamPlayer, fade: bool = false, fade_length : float = 1.0):
 	for node in get_children():
@@ -92,8 +105,12 @@ func pause_one(audio_stream_player : AudioStreamPlayer, fade: bool = false, fade
 				_add_fade_timer(node, "pause", fade_length)
 			else:
 				node.stop()
+		# If the node is a MinDelayTimer, unpause it
 		if node.name == Labels.keys()[_node_to_label(audio_stream_player)] +  "MinDelayTimer":
 			node.set_paused(true)
+			
+	if debug_messages:
+		print("Paused one sound: ", audio_stream_player)
 
 ##Pause all audio nodes of a specific type
 func pause_type(label: Labels, fade: bool = false, fade_length : float = 1.0):
@@ -105,9 +122,12 @@ func pause_type(label: Labels, fade: bool = false, fade_length : float = 1.0):
 				_add_fade_timer(node, "pause", fade_length)
 			else:
 				node.stop()
-		if node is Timer:
-			if node.name == Labels.keys()[label] +  "MinDelayTimer":
-				node.set_paused(true)
+		# If the node is a MinDelayTimer, unpause it
+		if node.name == Labels.keys()[label] +  "MinDelayTimer":
+			node.set_paused(true)
+			
+	if debug_messages:
+		print("Paused all sounds of type: ", Labels.keys()[label])
 
 ## Pause all audio nodes
 func pause_all(fade: bool = false, fade_length : float = 1.0):
@@ -117,8 +137,12 @@ func pause_all(fade: bool = false, fade_length : float = 1.0):
 				_add_fade_timer(node, "pause", fade_length)
 			else:
 				node.stop()
-		if node is Timer:
+		# If the node is a MinDelayTimer, unpause it
+		if node.name.contains("MinDelayTimer"):
 			node.set_paused(true)
+			
+	if debug_messages:
+		print("Paused all sounds")
 
 func clear_one(audio_stream_player : AudioStreamPlayer, fade: bool = false, fade_length : float = 1.0):
 	for node in get_children():
@@ -127,8 +151,12 @@ func clear_one(audio_stream_player : AudioStreamPlayer, fade: bool = false, fade
 				_add_fade_timer(node, "clear", fade_length)
 			else:
 				node.queue_free()
-		if node.name == Labels.keys()[_node_to_label(node)] +  "MinDelayTimer":
+		# If the node is a MinDelayTimer, unpause it
+		if node.name == Labels.keys()[_node_to_label(audio_stream_player)] +  "MinDelayTimer":
 			node.queue_free()
+			
+	if debug_messages:
+		print("cleared one sound: ", audio_stream_player)
 
 ## remove all playing audio of a specific type
 func clear_type(label : Labels, fade: bool = false, fade_length : float = 1.0):
@@ -140,17 +168,27 @@ func clear_type(label : Labels, fade: bool = false, fade_length : float = 1.0):
 				_add_fade_timer(node, "clear", fade_length)
 			else:
 				node.queue_free()
-		if node is Timer:
-			if node.name == Labels.keys()[_node_to_label(node)] +  "MinDelayTimer":
-				node.queue_free()
+		# If the node is a MinDelayTimer, unpause it
+		if node.name == Labels.keys()[label] +  "MinDelayTimer":
+			node.queue_free()
+			
+	if debug_messages:
+		print("Cleared all sounds of type: ", Labels.keys()[label])
 
 ## remove all audio nodes
 func clear_all(fade: bool = false, fade_length : float = 1.0):
 	for node in get_children():
-		if fade:
-			_add_fade_timer(node, "clear", fade_length)
-		else:
+		if node is AudioStreamPlayer:
+			if fade == true:
+				_add_fade_timer(node, "clear", fade_length)
+			else:
+				node.queue_free()
+		# If the node is a MinDelayTimer, unpause it
+		if node.name.contains("MinDelayTimer"):
 			node.queue_free()
+			
+	if debug_messages:
+		print("Cleared all sounds")
 
 func play_2d(label : Labels, node : Node):
 	var setting = label_to_setting[label]
@@ -195,34 +233,32 @@ func _process(_delta):
 	for node in get_children():
 		if node is not AudioStreamPlayer:
 			continue
-		#print(node.get_playback_position())
-		for child in node.get_children():
+		
+		for timer in node.get_children():
 			var type : String
-			if "unpause" in child.name:
+			if "unpause" in timer.name:
 				type = "unpause"
-			elif "pause" in child.name:
+			elif "pause" in timer.name:
 				type = "pause"
-			elif "clear" in child.name:
+			elif "clear" in timer.name:
 				type = "clear"
-			#print(child.time_left)
-			if child.time_left > 0:
-				#print(node.volume_db)
+				
+			if timer.time_left > 0:
 				var volume : float = label_to_setting[_node_to_label(node)].volume
 				if type == "unpause":
 					node.stream_paused = false
-					node.volume_db = linear_to_db(preload("uid://b558ipjpf7jwo").sample(child.time_left / child.wait_time)) + volume
+					node.volume_db = linear_to_db(preload("uid://b558ipjpf7jwo").sample(timer.time_left / timer.wait_time)) + volume
 				if type == "pause" or type == "clear":
-					node.volume_db = linear_to_db(preload("uid://d2651b3sfawfp").sample(child.time_left / child.wait_time)) + volume
+					node.volume_db = linear_to_db(preload("uid://d2651b3sfawfp").sample(timer.time_left / timer.wait_time)) + volume
 					
-			if child.time_left == 0:
-				child.queue_free()
+			if timer.time_left == 0:
+				timer.queue_free()
 				if type == "unpause":
 					node.stream_paused = false
 				if type == "pause":
 					node.stream_paused = true
 				if type == "clear":
 					node.queue_free()
-		#print("--")
 
 func _node_to_label(audio_stream_player : AudioStreamPlayer):
 	var text = audio_stream_player.name.remove_chars("1234567890")
