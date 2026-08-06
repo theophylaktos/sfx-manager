@@ -1,5 +1,19 @@
 extends Node
-# This node (the scene) to be added as a global named SFX
+## How to use this SFX Manager:
+##
+## Setup:
+## Copy all of the files inside of the "globals" folder into your project.
+## Add the SCENE "sfx_player.tscn" as an autoload in your project.
+##
+## Use:
+## When you want to add a new sound, start by loading the file into Godot.
+## Add a descriptive name to the enum "Labels" in sfx_player.gd. 
+## This name should be in ALL_CAPS
+## Go into the inspector of the node "SfxPlayer" in sfx_player.gd
+## In the dictionary "Label to Setting," add a new pair of a key and a setting
+## Select your audio file as the "stream"
+## Make sure to click "Add Key/Value Pair"!!
+## You can now call SFX.play(SFX.Labels.YOUR_LABEL)!
 
 ## Optionally, append a comment (##) after each label to describe where it is used [br]
 ## List of all sounds. Add a new item here when you add a new sound.
@@ -234,7 +248,7 @@ func clear_all(fade: bool = false, fade_length : float = 1.0):
 	if DEBUG_MESSAGES:
 		print("Cleared all sounds")
 
-## [b]Attach an AudioStreamPlayer2D of type label as a child of a node[/b] [br]
+## [b]Attach an AudioStreamPlayer2D as a child of a node[/b] [br]
 ## [br]
 ## [param label]: The label that the [AudioStreamPlayer2D] should use [br]
 ## [param node]: The node that the [AudioStreamPlayer2D] should be attached on
@@ -255,7 +269,7 @@ func play_2d(label : Labels, node : Node, loop : bool = false):
 	
 	return audio_stream_player_2d
 
-## [b]Attach an AudioStreamPlayer3D of type label as a child of a node[/b] [br]
+## [b]Attach an AudioStreamPlayer3D as a child of a node[/b] [br]
 ## [br]
 ## [param label]: The label that the [AudioStreamPlayer3D] should use [br]
 ## [param node]: The node that the [AudioStreamPlayer3D] should be attached on
@@ -332,7 +346,7 @@ func _process(_delta):
 
 ## [b]Accepts a node of type [AudioStreamPlayer], and returns its associated label.[/b] [br]
 ## [br]
-## [param audio_stream_player]: The [AudioStreamPlayer] whos label will be returned
+## [param audio_stream_player]: The [AudioStreamPlayer] whose label will be returned
 func _node_to_label(audio_stream_player : AudioStreamPlayer):
 	var text = audio_stream_player.name.remove_chars("1234567890")
 	text = text.to_upper()
