@@ -11,7 +11,7 @@ enum Labels {
 
 ## [code]TRUE[/code]: Print debug messages [br]
 ## [code]FALSE[/code]: Do not print debug messages
-const DEBUG_MESSAGES: bool = true
+const DEBUG_MESSAGES: bool = false
 
 ## Variable to make each [AudioStreamPlayer]'s name unique. 
 ## Increased by one when a new [AudioStreamPlayer] is instantiated.
@@ -25,7 +25,9 @@ var counter : int = 0
 ## [param label]: The sound you want to play, defined in SFX.Labels [br]
 ## [param loop]: Whether the sound should loop or not. [code]Default: FALSE[/code] [br]
 ## [param volume_mod]: Volume that is added after variation is calculated. [code]Default: 0.0[/code] [br]
-## [param pitch_mod]: Pitch that is added after variation is calculated. [code]Default: 0.0[/code]
+## [param pitch_mod]: Pitch that is added after variation is calculated. [code]Default: 0.0[/code] [br]
+## [br]
+## Returns the newly instantiated [AudioStreamPlayer]
 func play(label: Labels, loop : bool = false, volume_mod: float = 0.0, pitch_mod: float = 0.0):
 	# Checks if a min_delay_timer is in the scene tree, and if so, return early
 	if has_node(Labels.keys()[label] + "MinDelayTimer"):
@@ -236,35 +238,50 @@ func clear_all(fade: bool = false, fade_length : float = 1.0):
 ## [br]
 ## [param label]: The label that the [AudioStreamPlayer2D] should use [br]
 ## [param node]: The node that the [AudioStreamPlayer2D] should be attached on
-func play_2d(label : Labels, node : Node):
+## [param loop]: Whether the sound should loop or not. [code]Default: FALSE[/code] [br]
+## [br]
+## Returns the newly instantiated [AudioStreamPlayer2D]
+func play_2d(label : Labels, node : Node, loop : bool = false):
 	var setting = label_to_setting[label]
 	var audio_stream_player_2d : AudioStreamPlayer2D = AudioStreamPlayer2D.new()
 	AudioStreamPlayer2D.stream = setting.stream
-	AudioStreamPlayer2D.volume_db = setting.volume
-	AudioStreamPlayer2D.pitch_scale = setting.pitch
+	AudioStreamPlayer2D.volume_db = setting.volume + randf_range(-1,1) * setting.volume_variance
+	AudioStreamPlayer2D.pitch_scale = setting.pitch +  + randf_range(-1,1) * setting.pitch_variance
 	AudioStreamPlayer2D.bus = setting.bus
 	node.add_child(audio_stream_player_2d)
+	
+	if loop == true:
+		audio_stream_player_2d.stream.loop = true
+	
+	return audio_stream_player_2d
 
 ## [b]Attach an AudioStreamPlayer3D of type label as a child of a node[/b] [br]
 ## [br]
 ## [param label]: The label that the [AudioStreamPlayer3D] should use [br]
 ## [param node]: The node that the [AudioStreamPlayer3D] should be attached on
-func play_3d(label : Labels, node : Node):
+## [param loop]: Whether the sound should loop or not. [code]Default: FALSE[/code] [br]
+## [br]
+## Returns the newly instantiated [AudioStreamPlayer3D]
+func play_3d(label : Labels, node : Node, loop : bool = false):
 	var setting = label_to_setting[label]
 	var audio_stream_player_3d : AudioStreamPlayer3D = AudioStreamPlayer3D.new()
+	
 	AudioStreamPlayer3D.stream = setting.stream
-	AudioStreamPlayer3D.volume_db = setting.volume
-	AudioStreamPlayer3D.pitch_scale = setting.pitch
+	AudioStreamPlayer3D.volume_db = setting.volume + randf_range(-1,1) * setting.volume_variance
+	AudioStreamPlayer3D.pitch_scale = setting.pitch +  + randf_range(-1,1) * setting.pitch_variance
 	AudioStreamPlayer3D.bus = setting.bus
+	
+	if loop == true:
+		audio_stream_player_3d.stream.loop = true
+	
 	node.add_child(audio_stream_player_3d)
+	
+	return audio_stream_player_3d
 
 #endregion
 
 #region _add_min_delay_timer, _add_fade_timer, _process, _node_to_label
 
-## [b]Creates a [Timer] for the minimum delay until that sound can be played again[/b] [br]
-## [br]
-## [param label]: The label that the Minimum delay [Timer] should be associated with[br]
 func _add_min_delay_timer(label : Labels):
 	var setting = label_to_setting[label]
 	var min_delay_timer : Timer = Timer.new()
@@ -274,11 +291,6 @@ func _add_min_delay_timer(label : Labels):
 	min_delay_timer.timeout.connect(min_delay_timer.queue_free)
 	add_child(min_delay_timer)
 
-## [b]Creates a [Timer] for fading under an [AudioStreamPlayer][/b] [br]
-## [br]
-## [param audio_stream_player]: The [AudioStreamPlayer] that the [Timer] should be a child of [br]
-## [b]type[/b]: The type of fade that the [Timer] is (Either [code]unpause[/code], [code]pause[/code], or [code]clear[/code]) [br]
-## [b]length[/b]: The value that [member Timer.wait_time] will be
 func _add_fade_timer(audio_stream_player : AudioStreamPlayer, type : String, length : float):
 	var timer : Timer = Timer.new()
 	timer.name = audio_stream_player.name + type
