@@ -10,7 +10,7 @@ func _ready():
 	await get_tree().create_timer(2).timeout
 	SFX.pause_one(node, true, 5)
 	await get_tree().create_timer(3).timeout
-	SFX.pause_one(node, true, 5)
+	SFX.unpause_one(node, true, 5)
 	#await get_tree().create_timer(3).timeout
 	#SFX.pause_one(node, true, 5)
 	#await get_tree().create_timer(3).timeout

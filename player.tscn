@@ -1,0 +1,12 @@
+[gd_scene format=3 uid="uid://beiyv3kocglfo"]
+
+[ext_resource type="Script" uid="uid://cv6l0dq4p2ipm" path="res://player.gd" id="1_4flbx"]
+[ext_resource type="Texture2D" uid="uid://c6jv5uohhewjd" path="res://Sand_terrain.png" id="2_onrkg"]
+
+[node name="Player" type="CharacterBody2D" unique_id=884642923]
+script = ExtResource("1_4flbx")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=796363909]
+texture = ExtResource("2_onrkg")
+
+[node name="Camera2D" type="Camera2D" parent="." unique_id=1206128970]

@@ -280,14 +280,18 @@ func clear_all(fade: bool = false, fade_length : float = 1.0):
 func play_2d(id : Id, node : Node, loop : bool = false):
 	var setting = id_to_setting[id]
 	var audio_stream_player_2d : AudioStreamPlayer2D = AudioStreamPlayer2D.new()
-	AudioStreamPlayer2D.stream = setting.stream
-	AudioStreamPlayer2D.volume_db = setting.volume + randf_range(-1,1) * setting.volume_variance
-	AudioStreamPlayer2D.pitch_scale = setting.pitch +  + randf_range(-1,1) * setting.pitch_variance
-	AudioStreamPlayer2D.bus = setting.bus
+	audio_stream_player_2d.stream = setting.stream
+	audio_stream_player_2d.volume_db = setting.volume + randf_range(-1,1) * setting.volume_variance
+	audio_stream_player_2d.pitch_scale = setting.pitch +  + randf_range(-1,1) * setting.pitch_variance
+	audio_stream_player_2d.bus = setting.bus
 	node.add_child(audio_stream_player_2d)
+	audio_stream_player_2d.playing = true
 	
 	if loop == true:
-		audio_stream_player_2d.stream.loop = true
+		if audio_stream_player_2d.stream is AudioStreamWAV:
+			audio_stream_player_2d.stream.loop_mode = 1
+		elif audio_stream_player_2d.stream is AudioStreamMP3:
+			audio_stream_player_2d.stream.loop = true
 	
 	return audio_stream_player_2d
 
@@ -302,10 +306,10 @@ func play_3d(id : Id, node : Node, loop : bool = false):
 	var setting = id_to_setting[id]
 	var audio_stream_player_3d : AudioStreamPlayer3D = AudioStreamPlayer3D.new()
 	
-	AudioStreamPlayer3D.stream = setting.stream
-	AudioStreamPlayer3D.volume_db = setting.volume + randf_range(-1,1) * setting.volume_variance
-	AudioStreamPlayer3D.pitch_scale = setting.pitch +  + randf_range(-1,1) * setting.pitch_variance
-	AudioStreamPlayer3D.bus = setting.bus
+	audio_stream_player_3d.stream = setting.stream
+	audio_stream_player_3d.volume_db = setting.volume + randf_range(-1,1) * setting.volume_variance
+	audio_stream_player_3d.pitch_scale = setting.pitch +  + randf_range(-1,1) * setting.pitch_variance
+	audio_stream_player_3d.bus = setting.bus
 	
 	if loop == true:
 		audio_stream_player_3d.stream.loop = true
@@ -328,7 +332,6 @@ func _add_min_delay_timer(id : Id):
 	add_child(min_delay_timer)
 
 func _add_fade_timer(audio_stream_player : AudioStreamPlayer, type : String, length : float):
-	print("add")
 	for node in audio_stream_player.get_children():
 		node.queue_free()
 	var timer : Timer = Timer.new()
@@ -342,7 +345,6 @@ func _add_fade_timer(audio_stream_player : AudioStreamPlayer, type : String, len
 
 func _process(_delta):
 	for node in get_children():
-		print(node.volume_db)
 		if node is not AudioStreamPlayer:
 			continue
 		
