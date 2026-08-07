@@ -330,11 +330,9 @@ func _add_min_delay_timer(label : Labels):
 func _add_fade_timer(audio_stream_player : AudioStreamPlayer, type : String, length : float):
 	var timer : Timer = Timer.new()
 	timer.name = audio_stream_player.name + type
-	counter += 1
 	timer.wait_time = length
 	timer.autostart = true
 	timer.one_shot = true
-	
 	audio_stream_player.add_child(timer)
 	audio_stream_player.volume_limit = audio_stream_player.volume_db
 
