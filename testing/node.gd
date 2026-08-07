@@ -8,15 +8,18 @@ func _ready():
 	#pass
 	node = SFX.play(SFX.Labels.AMBIENCE)
 	await get_tree().create_timer(2).timeout
-	node2 = SFX.play(SFX.Labels.AMBIENCE)
-	await get_tree().create_timer(5).timeout
-	SFX.pause_type(SFX.Labels.AMBIENCE, true, 3)
-	await get_tree().create_timer(5).timeout
-	SFX.unpause_one(node, true, 12)
-	await get_tree().create_timer(5).timeout
-	SFX.clear_all(true, 3)
+	SFX.pause_one(node, true, 5)
+	await get_tree().create_timer(3).timeout
+	print("tried pausing again")
+	SFX.pause_one(node, true, 5)
+	#await get_tree().create_timer(3).timeout
+	#SFX.pause_one(node, true, 5)
+	#await get_tree().create_timer(3).timeout
+	#SFX.unpause_one(node, true, 5)
+	#await get_tree().create_timer(3).timeout
 	
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
-	pass
+	#pass
+	print(node.volume_db)
 	#SFX.play(SFX.Labels.SAND)

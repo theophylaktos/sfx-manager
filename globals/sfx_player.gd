@@ -34,6 +34,8 @@ var counter : int = 0
 ## A dictionary storing labels from [code]SFX.Labels[/code] and the associated [code]sfx_settings.gd[/code]
 @export var label_to_setting: Dictionary[Labels, SfxSettings]
 
+const SFX_PLAYER_SETTINGS = preload("uid://08s6w51f3gvp")
+
 ## [b]Play a sound in a new [AudioStreamPlayer], as defined by [param label]. This is called as[/b] [code]SFX.play(SFX.Labels.NAME)[/code]. [br]
 ##[br]
 ## [param label]: The sound you want to play, defined in SFX.Labels [br]
@@ -49,6 +51,7 @@ func play(label: Labels, loop : bool = false, volume_mod: float = 0.0, pitch_mod
 	
 	## The instance of an AudioStreamPlayer
 	var audio_stream_player = AudioStreamPlayer.new()
+	audio_stream_player.set_script(SFX_PLAYER_SETTINGS)
 	
 	## The instance of sfx_settings.gd
 	var setting = label_to_setting[label]
@@ -327,10 +330,13 @@ func _add_min_delay_timer(label : Labels):
 func _add_fade_timer(audio_stream_player : AudioStreamPlayer, type : String, length : float):
 	var timer : Timer = Timer.new()
 	timer.name = audio_stream_player.name + type
+	counter += 1
 	timer.wait_time = length
 	timer.autostart = true
 	timer.one_shot = true
+	
 	audio_stream_player.add_child(timer)
+	audio_stream_player.volume_limit = audio_stream_player.volume_db
 
 func _process(_delta):
 	for node in get_children():
@@ -348,11 +354,14 @@ func _process(_delta):
 				
 			if timer.time_left > 0:
 				var volume : float = label_to_setting[_node_to_label(node)].volume
-				if type == "unpause":
+				if type == "unpause": ## Fade in
 					node.stream_paused = false
-					node.volume_db = linear_to_db((timer.wait_time - timer.time_left) / timer.wait_time) + volume
-				if type == "pause" or type == "clear":
-					node.volume_db = linear_to_db(timer.time_left / timer.wait_time) + volume
+					var distance_through_curve = (timer.wait_time - timer.time_left) / timer.wait_time
+					var multiplicand = (db_to_linear(volume) - db_to_linear(node.volume_limit)) / db_to_linear(volume)
+					var adder = db_to_linear(node.volume_limit - volume)
+					node.volume_db = linear_to_db((distance_through_curve * multiplicand) + adder) + volume
+				if type == "pause" or type == "clear": ## Fade out
+					node.volume_db = linear_to_db(timer.time_left / timer.wait_time) + node.volume_limit
 					
 			if timer.time_left == 0:
 				timer.queue_free()
