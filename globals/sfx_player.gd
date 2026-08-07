@@ -34,11 +34,6 @@ var counter : int = 0
 ## A dictionary storing labels from [code]SFX.Labels[/code] and the associated [code]sfx_settings.gd[/code]
 @export var label_to_setting: Dictionary[Labels, SfxSettings]
 
-## The curve for fading in, stored as a resource. It is currently linear
-const FADE_IN_CURVE = preload("uid://d2651b3sfawfp")
-## The curve for fading out, stored as a resource. It is currently linear
-const FADE_OUT_CURVE = preload("uid://b558ipjpf7jwo")
-
 ## [b]Play a sound in a new [AudioStreamPlayer], as defined by [param label]. This is called as[/b] [code]SFX.play(SFX.Labels.NAME)[/code]. [br]
 ##[br]
 ## [param label]: The sound you want to play, defined in SFX.Labels [br]
@@ -355,9 +350,9 @@ func _process(_delta):
 				var volume : float = label_to_setting[_node_to_label(node)].volume
 				if type == "unpause":
 					node.stream_paused = false
-					node.volume_db = linear_to_db(FADE_IN_CURVE.sample((timer.wait_time - timer.time_left) / timer.wait_time)) + volume
+					node.volume_db = linear_to_db((timer.wait_time - timer.time_left) / timer.wait_time) + volume
 				if type == "pause" or type == "clear":
-					node.volume_db = linear_to_db(FADE_OUT_CURVE.sample((timer.wait_time - timer.time_left) / timer.wait_time)) + volume
+					node.volume_db = linear_to_db(timer.time_left / timer.wait_time) + volume
 					
 			if timer.time_left == 0:
 				timer.queue_free()
