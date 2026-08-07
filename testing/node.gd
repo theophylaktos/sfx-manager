@@ -6,11 +6,10 @@ var node2
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	#pass
-	node = SFX.play(SFX.Labels.AMBIENCE)
+	node = SFX.play(SFX.Id.AMBIENCE)
 	await get_tree().create_timer(2).timeout
 	SFX.pause_one(node, true, 5)
 	await get_tree().create_timer(3).timeout
-	print("tried pausing again")
 	SFX.pause_one(node, true, 5)
 	#await get_tree().create_timer(3).timeout
 	#SFX.pause_one(node, true, 5)
@@ -20,6 +19,5 @@ func _ready():
 	
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
-	#pass
-	print(node.volume_db)
+	pass
 	#SFX.play(SFX.Labels.SAND)
