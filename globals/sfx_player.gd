@@ -34,7 +34,12 @@ var counter : int = 0
 ## A dictionary storing labels from [code]SFX.Labels[/code] and the associated [code]sfx_settings.gd[/code]
 @export var label_to_setting: Dictionary[Labels, SfxSettings]
 
-## [b]Play a sound in a new [AudioStreamPlayer], as defined by [param label]. It should be called as[/b] [code]SFX.play(SFX.Labels.NAME)[/code]. [br]
+## The curve for fading in, stored as a resource. It is currently linear
+const FADE_IN_CURVE = preload("uid://d2651b3sfawfp")
+## The curve for fading out, stored as a resource. It is currently linear
+const FADE_OUT_CURVE = preload("uid://b558ipjpf7jwo")
+
+## [b]Play a sound in a new [AudioStreamPlayer], as defined by [param label]. This is called as[/b] [code]SFX.play(SFX.Labels.NAME)[/code]. [br]
 ##[br]
 ## [param label]: The sound you want to play, defined in SFX.Labels [br]
 ## [param loop]: Whether the sound should loop or not. [code]Default: FALSE[/code] [br]
@@ -72,6 +77,25 @@ func play(label: Labels, loop : bool = false, volume_mod: float = 0.0, pitch_mod
 		_add_min_delay_timer(label)
 		
 	return audio_stream_player
+	
+## [b] Play a random sound from [param labels], in a new [AudioStreamPlayer] [/b] [br]
+## This is called as [code]SFX.play_random([SFX.Labels.NAME1, SFX.Labels.NAME2])[/code] [br]
+## [br]
+## [param labels]: An array of labels you want to play [br]
+## [param loop]: Whether the sound should loop or not. [code]Default: FALSE[/code] [br]
+## [param volume_mod]: Volume that is added after variation is calculated. [code]Default: 0.0[/code] [br]
+## [param pitch_mod]: Pitch that is added after variation is calculated. [code]Default: 0.0[/code] [br]
+## [br]
+## Returns the newly instantiated [AudioStreamPlayer]
+func play_random(labels : Array[Labels] = [], loop : bool = false, volume_mod: float = 0.0, pitch_mod: float = 0.0):
+	var sound :int = randi_range(0,labels.size() - 1)
+	var label : Labels = labels[sound]
+	var node : AudioStreamPlayer = SFX.play(label, loop, volume_mod, pitch_mod)
+	var keys : Array[String] = []
+	for i in labels:
+		keys.append(Labels.find_key(i))
+	print("Played random sound: ", node, ", chosen from ", keys)
+	return node
 
 #region unpause, pause, clear, play_2d
 ## [b]Unpause one [AudioStreamPlayer], with an optional fade in[/b] [br]
@@ -331,9 +355,9 @@ func _process(_delta):
 				var volume : float = label_to_setting[_node_to_label(node)].volume
 				if type == "unpause":
 					node.stream_paused = false
-					node.volume_db = linear_to_db(preload("uid://b558ipjpf7jwo").sample(timer.time_left / timer.wait_time)) + volume
+					node.volume_db = linear_to_db(FADE_IN_CURVE.sample((timer.wait_time - timer.time_left) / timer.wait_time)) + volume
 				if type == "pause" or type == "clear":
-					node.volume_db = linear_to_db(preload("uid://d2651b3sfawfp").sample(timer.time_left / timer.wait_time)) + volume
+					node.volume_db = linear_to_db(FADE_OUT_CURVE.sample((timer.wait_time - timer.time_left) / timer.wait_time)) + volume
 					
 			if timer.time_left == 0:
 				timer.queue_free()
