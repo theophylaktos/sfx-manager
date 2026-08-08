@@ -7,7 +7,7 @@ extends Node
 ##
 ## Use:
 ## When you want to add a new sound, start by loading the file into Godot.
-## Add a descriptive name to the enum "Id" in sfx_player.gd.
+## Add a descriptive name to the enum "Id" in sfx_player.tscn.
 ## This name should be in ALL_CAPS.
 ## Go into the inspector of the node "SfxPlayer" in sfx_player.gd.
 ## In the dictionary "Id_to_Setting," add a new pair of a key and a setting.
@@ -62,7 +62,10 @@ func play(id: Id, loop : bool = false, volume_mod: float = 0.0, pitch_mod: float
 	audio_stream_player.volume_db = setting.volume + randf_range(-1,1) * setting.volume_variance + volume_mod
 	audio_stream_player.pitch_scale = setting.pitch + randf_range(-1,1) * setting.pitch_variance + pitch_mod
 	if loop == true:
-		audio_stream_player.stream.loop = true
+		if audio_stream_player.stream is AudioStreamWAV:
+			audio_stream_player.stream.loop_mode = 1
+		elif audio_stream_player.stream is AudioStreamMP3:
+			audio_stream_player.stream.loop = true
 	
 	add_child(audio_stream_player)
 	audio_stream_player.finished.connect(audio_stream_player.queue_free)

@@ -8,7 +8,7 @@ func _ready():
 	#pass
 	node = SFX.play(SFX.Id.AMBIENCE)
 	await get_tree().create_timer(2).timeout
-	SFX.pause_one(node, true, 5)
+	SFX.pause_all(true, 5)
 	await get_tree().create_timer(3).timeout
 	SFX.unpause_one(node, true, 5)
 	#await get_tree().create_timer(3).timeout

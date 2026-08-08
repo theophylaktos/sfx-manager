@@ -2,9 +2,16 @@
 
 [ext_resource type="Script" uid="uid://dbhocmh0y3mga" path="res://object.gd" id="1_l2ofb"]
 [ext_resource type="Texture2D" uid="uid://c6jv5uohhewjd" path="res://Sand_terrain.png" id="2_3xuqs"]
+[ext_resource type="AudioStream" uid="uid://c5pj503hq05cm" path="res://testing/industry_ambience.wav" id="3_0i3lm"]
 
 [node name="Object" type="Node2D" unique_id=188938345]
 script = ExtResource("1_l2ofb")
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=1379640504]
 texture = ExtResource("2_3xuqs")
+
+[node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="." unique_id=1785943730]
+stream = ExtResource("3_0i3lm")
+autoplay = true
+
+[node name="Camera2D" type="Camera2D" parent="." unique_id=946079734]
