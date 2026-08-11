@@ -5,7 +5,7 @@
 [ext_resource type="AudioStream" uid="uid://c3ewddm3kuaiq" path="res://testing/hourglass_fall.mp3" id="3_uqm86"]
 [ext_resource type="AudioStream" uid="uid://c5pj503hq05cm" path="res://testing/industry_ambience.wav" id="4_k8a2e"]
 [ext_resource type="AudioStream" uid="uid://dim3qcukvs71s" path="res://testing/TheRealSandFalling.mp3" id="5_vcnun"]
-[ext_resource type="AudioStream" uid="uid://baw3opdsc3nj0" path="res://testing/bullet_hit_wall.wav" id="6_0agbu"]
+[ext_resource type="AudioStream" uid="uid://bjjwoq3366kwn" path="res://testing/bullet_hit_wall.wav" id="6_0agbu"]
 
 [sub_resource type="Resource" id="Resource_1r7jy"]
 script = ExtResource("2_xnm38")

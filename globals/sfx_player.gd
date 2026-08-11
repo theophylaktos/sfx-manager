@@ -15,6 +15,10 @@ extends Node
 ## Make sure to click "Add Key/Value Pair"!!
 ## You can now call SFX.play(SFX.Id.YOUR_ID).
 
+# Note: Currently, play_2d and play_3d do not work with .wav files. (.ogg has not been tested.)
+# If you need to convert from .wav to .mp3, I would recommend https://convert.to.it
+# It is a free, open-source, local file converter.
+
 # Optionally, append a comment (##) after each id to describe where it is used
 ## List of all sounds. Add a new id here when you add a new sound.
 enum Id {
@@ -37,7 +41,9 @@ var counter : int = 0
 
 const SFX_PLAYER_SETTINGS = preload("uid://08s6w51f3gvp")
 
-## [b]Play a sound in a new [AudioStreamPlayer], as defined by [param id]. This is called as[/b] [code]SFX.play(SFX.Id.NAME)[/code]. [br]
+## [b]Play a sound in a new [AudioStreamPlayer], as defined by [param id]. [br]
+## [br]
+## Called as[/b] [code]SFX.play(SFX.Id.NAME)[/code]. [br]
 ##[br]
 ## [param id]: The sound you want to play, defined in SFX.Id [br]
 ## [param loop]: Whether the sound should loop or not. [code]Default: FALSE[/code] [br]
@@ -275,10 +281,10 @@ func clear_all(fade: bool = false, fade_length : float = 1.0):
 	if DEBUG_MESSAGES:
 		print("Cleared all sounds")
 
-## [b]Attach an AudioStreamPlayer2D as a child of a node[/b] [br]
+## [b]Attaches an AudioStreamPlayer2D as a child of a node[/b] [br]
 ## [br]
-## [param id]: The id that the [AudioStreamPlayer2D] should use. Currently only works with .mp3s [br]
-## [param node]: The node that the [AudioStreamPlayer2D] should be attached on
+## [param id]: The id that the [AudioStreamPlayer2D] should use. Currently, .wav files don't work[br]
+## [param node]: The node that the [AudioStreamPlayer2D] should be attached on [br]
 ## [param loop]: Whether the sound should loop or not. [code]Default: FALSE[/code] [br]
 ## [br]
 ## Returns the newly instantiated [AudioStreamPlayer2D]
@@ -300,10 +306,10 @@ func play_2d(id : Id, node : Node, loop : bool = false):
 	
 	return audio_stream_player_2d
 
-## [b]Attach an AudioStreamPlayer3D as a child of a node[/b] [br]
+## [b]Attaches an AudioStreamPlayer3D as a child of a node[/b] [br]
 ## [br]
-## [param id]: The id that the [AudioStreamPlayer3D] should use. Currently only works with .mp3s [br]
-## [param node]: The node that the [AudioStreamPlayer3D] should be attached on
+## [param id]: The id that the [AudioStreamPlayer3D] should use. Currently, .wav files don't work[br]
+## [param node]: The node that the [AudioStreamPlayer3D] should be attached on [br]
 ## [param loop]: Whether the sound should loop or not. [code]Default: FALSE[/code] [br]
 ## [br]
 ## Returns the newly instantiated [AudioStreamPlayer3D]
