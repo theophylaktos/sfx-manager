@@ -21,6 +21,7 @@ enum Id {
 	FALL, 
 	AMBIENCE,
 	SAND,
+	HIT,
 }
 
 ## [code]TRUE[/code]: Print debug messages [br]
@@ -50,7 +51,7 @@ func play(id: Id, loop : bool = false, volume_mod: float = 0.0, pitch_mod: float
 		return
 	
 	## The instance of an AudioStreamPlayer
-	var audio_stream_player = AudioStreamPlayer.new()
+	var audio_stream_player : AudioStreamPlayer = AudioStreamPlayer.new()
 	audio_stream_player.set_script(SFX_PLAYER_SETTINGS)
 	
 	## The instance of sfx_settings.gd
@@ -276,7 +277,7 @@ func clear_all(fade: bool = false, fade_length : float = 1.0):
 
 ## [b]Attach an AudioStreamPlayer2D as a child of a node[/b] [br]
 ## [br]
-## [param id]: The id that the [AudioStreamPlayer2D] should use [br]
+## [param id]: The id that the [AudioStreamPlayer2D] should use. Currently only works with .mp3s [br]
 ## [param node]: The node that the [AudioStreamPlayer2D] should be attached on
 ## [param loop]: Whether the sound should loop or not. [code]Default: FALSE[/code] [br]
 ## [br]
@@ -301,7 +302,7 @@ func play_2d(id : Id, node : Node, loop : bool = false):
 
 ## [b]Attach an AudioStreamPlayer3D as a child of a node[/b] [br]
 ## [br]
-## [param id]: The id that the [AudioStreamPlayer3D] should use [br]
+## [param id]: The id that the [AudioStreamPlayer3D] should use. Currently only works with .mp3s [br]
 ## [param node]: The node that the [AudioStreamPlayer3D] should be attached on
 ## [param loop]: Whether the sound should loop or not. [code]Default: FALSE[/code] [br]
 ## [br]

@@ -6,7 +6,7 @@ var node2
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	#pass
-	node = SFX.play(SFX.Id.AMBIENCE)
+	node = SFX.play(SFX.Id.HIT, true)
 	await get_tree().create_timer(2).timeout
 	SFX.pause_all(true, 5)
 	await get_tree().create_timer(3).timeout

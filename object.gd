@@ -3,8 +3,7 @@ extends Node2D
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	var node = SFX.play_2d(SFX.Id.AMBIENCE, self, true)
-	node.playing = true
+	SFX.play_2d(SFX.Id.FALL, self, true)
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
