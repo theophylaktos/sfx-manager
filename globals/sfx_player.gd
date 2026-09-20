@@ -4,7 +4,8 @@ extends Node
 ### Setup:
 #
 #- Copy all of the files inside of the "globals" folder into your project.
-#- Add the **SCENE** "sfx_player.tscn" as an autoload in your project.
+#- Add the **SCENE** "sfx_player.tscn" as an autoload in your project. 
+#- I would recommend naming it "SFX", but you can choose whatever.
 #
 ### Use:
 #
