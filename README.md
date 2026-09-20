@@ -20,7 +20,7 @@
 
 ## Settings per label:
 
-Stream - The AudioStream to be played.
+Stream - The AudioStream to be played. [br]
 Bus - The Audio Bus for the audio to be played on.
 
 Volume - Volume in decibels.
