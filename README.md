@@ -34,7 +34,7 @@
 - play() - Adds an AudioStreamPlayer playing parameter label. Can be loopable, and have per stream volume and pitch modulation
 - play_random() - Same as play, but selects a random sound from a parameter array
 
-- The nine following functions all can fade in / fade out, with a optional parameter for the length of the fade
+#The nine following functions all can fade in / fade out, with a optional parameter for the length of the fade
 
 - unpause_one(),  pause_one(),  clear_one()  - Unpause, Pause, or Clear one stream
 - unpause_type(), pause_type(), clear_type() - Unpause, Pause, or Clear all streams with one label
