@@ -1,38 +1,7 @@
 [gd_scene format=3 uid="uid://d1mff478o3ug3"]
 
 [ext_resource type="Script" uid="uid://fmnyqc2cx2fw" path="res://globals/sfx_player.gd" id="1_xnm38"]
-[ext_resource type="Script" uid="uid://c3d63fvkogmx2" path="res://globals/sfx_settings.gd" id="2_xnm38"]
-[ext_resource type="AudioStream" uid="uid://c3ewddm3kuaiq" path="res://testing/hourglass_fall.mp3" id="3_uqm86"]
-[ext_resource type="AudioStream" uid="uid://c5pj503hq05cm" path="res://testing/industry_ambience.wav" id="4_k8a2e"]
-[ext_resource type="AudioStream" uid="uid://dim3qcukvs71s" path="res://testing/TheRealSandFalling.mp3" id="5_vcnun"]
-[ext_resource type="AudioStream" uid="uid://bjjwoq3366kwn" path="res://testing/bullet_hit_wall.wav" id="6_0agbu"]
-
-[sub_resource type="Resource" id="Resource_1r7jy"]
-script = ExtResource("2_xnm38")
-stream = ExtResource("3_uqm86")
-metadata/_custom_type_script = "uid://c3d63fvkogmx2"
-
-[sub_resource type="Resource" id="Resource_6s6se"]
-script = ExtResource("2_xnm38")
-stream = ExtResource("4_k8a2e")
-metadata/_custom_type_script = "uid://c3d63fvkogmx2"
-
-[sub_resource type="Resource" id="Resource_gk6ul"]
-script = ExtResource("2_xnm38")
-stream = ExtResource("5_vcnun")
-metadata/_custom_type_script = "uid://c3d63fvkogmx2"
-
-[sub_resource type="Resource" id="Resource_uqm86"]
-script = ExtResource("2_xnm38")
-stream = ExtResource("6_0agbu")
-metadata/_custom_type_script = "uid://c3d63fvkogmx2"
 
 [node name="SfxPlayer" type="Node" unique_id=1790965844]
 process_mode = 3
 script = ExtResource("1_xnm38")
-id_to_setting = Dictionary[int, ExtResource("2_xnm38")]({
-0: SubResource("Resource_1r7jy"),
-1: SubResource("Resource_6s6se"),
-2: SubResource("Resource_gk6ul"),
-3: SubResource("Resource_uqm86")
-})
