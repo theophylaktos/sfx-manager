@@ -12,10 +12,10 @@ extends Node
 #- Add a descriptive name to the enum "Id" in sfx_player.gd.
 #- This name should be in **ALL_CAPS**.
 #- Go into the **inspector** of the node "SfxPlayer" in sfx_player.gd.
-#- In the dictionary "Label to Setting," select the your new key (name from Id) and value (create a new SFXSettings).
+#- In the dictionary "Id to Setting," select the your new key (name from Id) and value (create a new SFXSettings).
 #- Select your audio file as the **"stream."**
-#- Make sure to click "Add Key/Value Pair" before exiting the inspector menu
-#- You can now call SFX.play(SFX.Labels.YOUR_LABEL).
+#- Make sure to click "Add Key/Value Pair" before exiting the inspector.
+#- You can now call SFX.play(SFX.Id.YOUR_ID).
 #
 #- The most important function is **SFX.play(SFX.Id.YOUR_ID)**
 
@@ -26,10 +26,7 @@ extends Node
 # Optionally, append a comment (##) after each id to describe where it is used
 ## List of all sounds. Add a new id here when you add a new sound.
 enum Id {
-	FALL, 
-	AMBIENCE,
-	SAND,
-	HIT,
+	YOUR_ID,
 }
 
 const PRINT_DEBUG_MESSAGES: bool = false

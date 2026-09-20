@@ -11,38 +11,39 @@
 - Add a descriptive name to the enum "Id" in sfx_player.gd.
 - This name should be in **ALL_CAPS**.
 - Go into the **inspector** of the node "SfxPlayer" in sfx_player.gd.
-- In the dictionary "Label to Setting," select the your new key (name from Id) and value (create a new SFXSettings).
+- In the dictionary "Id to Setting," select the your new key (name from Id) and value (create a new SFXSettings).
 - Select your audio file as the **"stream."**
-- Make sure to click "Add Key/Value Pair" before exiting the inspector menu
-- You can now call SFX.play(SFX.Labels.YOUR_LABEL).
+- Make sure to click "Add Key/Value Pair" before exiting the inspector.
+- You can now call SFX.play(SFX.Id.YOUR_LABEL).
 
 - The most important function is **SFX.play(SFX.Id.YOUR_ID)**
 
-## Settings per label:
+## Settings per id:
 
 - **Stream** - The AudioStream to be played.
 - **Bus** - The Audio Bus for the audio to be played on.
 
 - **Volume** - Volume in decibels.
-- **Volume Variance** - Random volume variance per AudioStreamPlayer.
-- **Pitch Variance** - Random pitch variance per AudioStreamPlayer.
-- **Min Delay** - Minimum time between when sounds using the same label can be played.
+- **Volume Variance** - Random volume variance, per AudioStreamPlayer.
+- **Volume** - Pitch in semitones.
+- **Pitch Variance** - Random pitch variance, per AudioStreamPlayer.
+- **Min Delay** - Minimum time between two sounds using the same id playing.
 
 
 ## Public Functions:
 
-- **play()** - Adds an AudioStreamPlayer playing parameter label. Can be loopable, and have per stream volume and pitch modulation
+- **play()** - Adds an AudioStreamPlayer playing parameter id. Can be loopable, and have per stream volume and pitch modulation
 - **play_random()** - Same as play, but selects a random sound from a parameter array
 
 **The nine following functions all can fade in / fade out, with a optional parameter for the length of the fade**
 
 - **unpause_one(),  pause_one(),  clear_one()**  - Unpause, Pause, or Clear one stream
-- **unpause_type(), pause_type(), clear_type()** - Unpause, Pause, or Clear all streams with one label
+- **unpause_type(), pause_type(), clear_type()** - Unpause, Pause, or Clear all streams with one id
 - **unpause_all(),  pause_all(),  clear_all()**  - Unpause, Pause, or Clear all streams
 
-- **play_2d()** - Adds an AudioStreamPlayer2D playing parameter label to parameter node
-- **play_3d()** - Adds an AudioStreamPlayer3D playing parameter label to parameter node
+- **play_2d()** - Adds an AudioStreamPlayer2D playing parameter id to parameter node
+- **play_3d()** - Adds an AudioStreamPlayer3D playing parameter id to parameter node
 
 ## Constants:
 
-- **DEBUG_MESSAGES** - Print a message each time one of the public functions is called
+- **PRINT_DEBUG_MESSAGES** - Print a message each time one of the public functions is called
